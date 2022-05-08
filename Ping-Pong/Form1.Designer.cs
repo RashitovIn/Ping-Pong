@@ -30,63 +30,86 @@ namespace Ping_Pong
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.platformRightPB = new System.Windows.Forms.PictureBox();
-            this.panel = new System.Windows.Forms.Panel();
-            this.ballPB = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.platformRightPB)).BeginInit();
-            this.panel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ballPB)).BeginInit();
+            this.mainArea = new System.Windows.Forms.PictureBox();
+            this.compGoals = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.playerGoals = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.mainArea)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // platformRightPB
+            // mainArea
             // 
-            this.platformRightPB.BackColor = System.Drawing.SystemColors.Desktop;
-            this.platformRightPB.Location = new System.Drawing.Point(585, 139);
-            this.platformRightPB.Name = "platformRightPB";
-            this.platformRightPB.Size = new System.Drawing.Size(26, 147);
-            this.platformRightPB.TabIndex = 0;
-            this.platformRightPB.TabStop = false;
+            this.mainArea.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.mainArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainArea.Location = new System.Drawing.Point(3, 30);
+            this.mainArea.Name = "mainArea";
+            this.mainArea.Size = new System.Drawing.Size(928, 527);
+            this.mainArea.TabIndex = 0;
+            this.mainArea.TabStop = false;
             // 
-            // panel
+            // compGoals
             // 
-            this.panel.BackColor = System.Drawing.Color.Transparent;
-            this.panel.Controls.Add(this.ballPB);
-            this.panel.Controls.Add(this.platformRightPB);
-            this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel.Location = new System.Drawing.Point(0, 0);
-            this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(800, 531);
-            this.panel.TabIndex = 1;
-            this.panel.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPaint);
+            this.compGoals.AutoSize = true;
+            this.compGoals.Location = new System.Drawing.Point(3, 3);
+            this.compGoals.Name = "compGoals";
+            this.compGoals.Size = new System.Drawing.Size(38, 15);
+            this.compGoals.TabIndex = 0;
+            this.compGoals.Text = "label1";
             // 
-            // ballPB
+            // tableLayoutPanel1
             // 
-            this.ballPB.BackColor = System.Drawing.Color.Transparent;
-            this.ballPB.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ballPB.BackgroundImage")));
-            this.ballPB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ballPB.Location = new System.Drawing.Point(133, 139);
-            this.ballPB.Name = "ballPB";
-            this.ballPB.Size = new System.Drawing.Size(50, 50);
-            this.ballPB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.ballPB.TabIndex = 1;
-            this.ballPB.TabStop = false;
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.mainArea, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4.821429F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 95.17857F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(934, 560);
+            this.tableLayoutPanel1.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.playerGoals);
+            this.panel1.Controls.Add(this.compGoals);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(928, 21);
+            this.panel1.TabIndex = 0;
+            // 
+            // playerGoals
+            // 
+            this.playerGoals.AutoSize = true;
+            this.playerGoals.Location = new System.Drawing.Point(887, 3);
+            this.playerGoals.Name = "playerGoals";
+            this.playerGoals.Size = new System.Drawing.Size(38, 15);
+            this.playerGoals.TabIndex = 1;
+            this.playerGoals.Text = "label2";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 531);
-            this.Controls.Add(this.panel);
+            this.ClientSize = new System.Drawing.Size(934, 560);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.DoubleBuffered = true;
             this.Name = "Form1";
-            this.Text = "Form1";
-            this.TransparencyKey = System.Drawing.Color.White;
-            this.Click += new System.EventHandler(this.Form1_Click);
-            ((System.ComponentModel.ISupportInitialize)(this.platformRightPB)).EndInit();
-            this.panel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ballPB)).EndInit();
+            this.Text = "Ping-Pong";
+            this.TopMost = true;
+            this.TransparencyKey = System.Drawing.Color.Transparent;
+            ((System.ComponentModel.ISupportInitialize)(this.mainArea)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -94,9 +117,11 @@ namespace Ping_Pong
         #endregion
 
         private System.Windows.Forms.Timer timer;
-        private System.Windows.Forms.PictureBox platformRightPB;
-        private System.Windows.Forms.Panel panel;
-        private System.Windows.Forms.PictureBox ballPB;
+        private System.Windows.Forms.PictureBox mainArea;
+        private System.Windows.Forms.Label compGoals;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label playerGoals;
     }
 }
 

@@ -11,34 +11,95 @@ namespace Ping_Pong
 {
     class Ball
     {
+        public event Goal GoalEvent;
         public Rectangle Body;
-        public Bitmap Sprite { get; protected set; }
+        private int areaWidth;
+        private int areaHeight;
+        Random random;
 
-        public int Speed { get; private protected set; }
+        public Bitmap Sprite { get; protected set; }
+        public int SpeedX { get; private protected set; }
+        public int SpeedY { get; private protected set; }
         public int Dx { get; private protected set; } = -1;
         public int Dy { get; private protected set; }
-        public int PosX { get; private protected set; }
-        public int PosY { get; private protected set; }
 
-        public Ball(Bitmap sprite, int dx, int dy)
+        private void LoadBitmap()
+        {
+            var appDir = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory())));
+            var fullPath = Path.Combine(appDir, @"src");
+            Sprite = new Bitmap(Image.FromFile(Path.Combine(fullPath, "shar.bmp")));
+            Sprite.MakeTransparent(Color.FromArgb(255, 255, 255));
+        }
+
+        public Ball(int dx, int dy, PictureBox mainArea)
         {
             Dx = dx;
             Dy = dy;
-            PosX = 50;
-            PosY = 150;
-            Speed = 1;
-            var appDir = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
-            var fullPath = Path.Combine(appDir, @"src");
-            Sprite = sprite;
-            //MessageBox.Show(Directory.GetCurrentDirectory());
-            Body = new Rectangle(PosX, PosY, 30, 30);
-
+            SpeedX = 15;
+            SpeedY = 15;
+            LoadBitmap();
+            areaWidth = mainArea.Width;
+            areaHeight = mainArea.Height;
+            random = new Random();
+            Body = new Rectangle(areaWidth / 2, random.Next(0, areaHeight - Body.Height - 5), 30, 30);
         }
 
-        public void Update()
+
+        public void Update(Platform[] platforms)
         {
-            Body.X += Dx * Speed;
-            Body.Y += Dy * Speed;
+            if (Body.Bottom >= areaHeight)
+            {
+                //Body.Bottom = areaHeight;
+                Dy *= -1;
+            }
+            else if (Body.Top <= 0)
+            {
+                Dy *= -1;
+            }
+
+            if (Body.Left <= 0)
+            {
+                GoalEvent('c');
+                Body.X = areaWidth / 2;
+                Body.Y = random.Next(0, areaHeight - Body.Height - 5);
+                Dx *= -1;
+            }
+            else if (Body.Right >= areaWidth)
+            {
+                GoalEvent('p');
+                Body.X = areaWidth / 2;
+                Body.Y = random.Next(0, areaHeight - Body.Height - 5);
+                Dx *= -1;
+            }
+
+            Body.X += Dx * SpeedX;
+            Body.Y += Dy * SpeedY;
+
+            foreach (Platform item in platforms)
+            {
+                if (Body.IntersectsWith(item.Body))
+                {
+                    if (item.Type == "player") //&& Body.Right >= item.Body.Left + 10)
+                    {
+                        if (Dx > 0 && Body.Right >= item.Body.Left)
+                        {
+                            Body.X = item.Body.Left - Body.Width;
+                            Dx *= -1;
+                        }
+                        else if (Dx < 0 && Body.Left <= item.Body.Right)
+                        {
+                            Body.X = item.Body.Right + 5;
+                            Dx = 1;
+                        }
+                    }
+
+                    if (item.Type == "computer" && Body.Left <= item.Body.Right - 10)
+                    {
+                        Dx *= -1;
+                        Body.X = item.Body.Right;
+                    }
+                }
+            } 
         }
     }
 }

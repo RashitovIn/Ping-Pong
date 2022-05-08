@@ -1,50 +1,95 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 
 namespace Ping_Pong
 {
+    public delegate void Goal(char platformType);
     public partial class Form1 : Form
     {
         Ball ball;
-        Platform platform;
+        Platform player;
+        ComputerPlatform computer;
+        Graphics g;
+        Platform[] platforms = new Platform[2];
 
         public Form1()
         {
             InitializeComponent();
-            Bitmap Sprite = new Bitmap(Image.FromFile(Path.Combine(@"C:\Users\wispm\source\repos\Ping-Pong\Ping-Pong\src", "shar.bmp")));
-            Sprite.MakeTransparent(Color.FromArgb(255, 255, 255));
-            ball = new Ball(Sprite, 1, 0);
-            platform = new Platform(platformRightPB);
+            compGoals.Text = "0";
+            playerGoals.Text = "0";
+            mainArea.Image = new Bitmap(mainArea.Width, mainArea.Height);
+            g = Graphics.FromImage(mainArea.Image);
 
+            ball = new Ball(1, -1, mainArea);
+            ball.GoalEvent += Goal;
+
+            player = new Platform(mainArea);
+            computer = new ComputerPlatform(mainArea);
+
+            KeyUp += new KeyEventHandler(PlatformControlUp);
+            KeyDown += new KeyEventHandler(PlatformControlDown);
+            mainArea.MouseMove += new MouseEventHandler(player.MouseMove);
             timer.Tick += new EventHandler(Update);
-            timer.Interval = 10;
+            timer.Interval = 30;
             timer.Enabled = true;
         }
 
         private void Update(object sender, EventArgs e)
         {
-            Invalidate();
-            ball.Update();
-            platform.Update();
+            g.Clear(Color.FromArgb(0, Color.White));
             
+            player.Update();
+            computer.Update(ball);
+
+            platforms[0] = player;
+            platforms[1] = computer;
+            ball.Update(platforms);
+
+            g.DrawImage(ball.Sprite, ball.Body);
+            g.FillRectangle(Brushes.Black, player.Body);
+            g.FillRectangle(Brushes.Black, computer.Body);
+
+            mainArea.Refresh();
         }
 
-        private void OnPaint(object sender, PaintEventArgs e)
+        private void PlatformControlUp(object sender, KeyEventArgs e)
         {
-            e.Graphics.DrawImage(ball.Sprite, ball.Body);
+            player.Dy = 0;
+            player.Dx = 0;
         }
 
-        private void Form1_Click(object sender, EventArgs e)
+        private void PlatformControlDown(object sender, KeyEventArgs e)
         {
-            
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                    player.Dy = -1;
+                    break;
+                case Keys.Down:
+                    player.Dy = 1;
+                    break;
+                case Keys.Left:
+                    player.Dx = -1;
+                    break;
+                case Keys.Right:
+                    player.Dx = 1;
+                    break;
+            }
+        }
+
+        private void Goal(char platformType)
+        {
+            if (platformType == 'p')
+            {
+                compGoals.Text = Convert.ToString(Convert.ToInt32(compGoals.Text) + 1);
+                System.Threading.Thread.Sleep(200);
+            }
+            else
+            {
+                playerGoals.Text = Convert.ToString(Convert.ToInt32(playerGoals.Text) + 1);
+                System.Threading.Thread.Sleep(200);
+            }
         }
     }
 }
