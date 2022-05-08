@@ -5,6 +5,7 @@ using System.Windows.Forms;
 namespace Ping_Pong
 {
     public delegate void Goal(char platformType);
+
     public partial class Form1 : Form
     {
         Ball ball;
@@ -21,17 +22,17 @@ namespace Ping_Pong
             mainArea.Image = new Bitmap(mainArea.Width, mainArea.Height);
             g = Graphics.FromImage(mainArea.Image);
 
-            ball = new Ball(1, -1, mainArea);
+            ball = new Ball(mainArea);
             ball.GoalEvent += Goal;
 
-            player = new Platform(mainArea);
-            computer = new ComputerPlatform(mainArea);
+            player = new Platform(mainArea, label1);
+            computer = new ComputerPlatform(mainArea, label1);
 
             KeyUp += new KeyEventHandler(PlatformControlUp);
             KeyDown += new KeyEventHandler(PlatformControlDown);
             mainArea.MouseMove += new MouseEventHandler(player.MouseMove);
             timer.Tick += new EventHandler(Update);
-            timer.Interval = 30;
+            timer.Interval = 1;
             timer.Enabled = true;
         }
 
@@ -83,12 +84,12 @@ namespace Ping_Pong
             if (platformType == 'p')
             {
                 compGoals.Text = Convert.ToString(Convert.ToInt32(compGoals.Text) + 1);
-                System.Threading.Thread.Sleep(200);
+                //System.Threading.Thread.Sleep(200);
             }
             else
             {
                 playerGoals.Text = Convert.ToString(Convert.ToInt32(playerGoals.Text) + 1);
-                System.Threading.Thread.Sleep(200);
+                //System.Threading.Thread.Sleep(200);
             }
         }
     }

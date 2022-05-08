@@ -11,15 +11,16 @@ namespace Ping_Pong
         protected int areaHeight;
         protected int width = 20;
         protected int height = 100;
+        Label lb;
 
         public int Dy { get; set; }
         public int Dx { get; set; }
-        public Point OldPoint { get; set; }
+        public Point Position { get; set; }
         public int SpeedX { get; private protected set; }
         public int SpeedY { get; private protected set; }
         public string Type { get; private protected set; }
 
-        public Platform(PictureBox mainArea)
+        public Platform(PictureBox mainArea, Label label1)
         {
             Type = "player";
             Dy = 0;
@@ -27,9 +28,10 @@ namespace Ping_Pong
             SpeedX = 35;
             SpeedY = 35;
             Body = new Rectangle(mainArea.Width - (20 + width), 50, width, height);
-            OldPoint = new Point(mainArea.Width - (20 + width), 50);
+            Position = new Point(mainArea.Width - (20 + width), 50);
             areaWidth = mainArea.Width;
             areaHeight = mainArea.Height;
+            lb = label1;
         }
 
         public virtual void CheckPos()
@@ -55,18 +57,15 @@ namespace Ping_Pong
 
         public void MouseMove(object sender, MouseEventArgs e)
         {
-            Body.Location = e.Location;
-            SpeedX = (OldPoint.X - Body.Location.X) / 30;
-            SpeedY = (OldPoint.Y - Body.Location.Y) / 30;
-            OldPoint = Body.Location;
-
+            Position = e.Location;
         }
 
         public void Update()
         {
-            //Body.Y += Dy * Speed;
-            //Body.X += Dx * Speed;
-
+            SpeedX = Body.Location.X - Position.X;
+            SpeedY = Body.Location.Y - Position.Y;
+            Body.Location = Position;
+            lb.Text = Convert.ToString(SpeedX) + ' ' + Convert.ToString(SpeedY);
             CheckPos();
         }
 
@@ -108,10 +107,10 @@ namespace Ping_Pong
 
     class ComputerPlatform : Platform
     {
-        public ComputerPlatform(PictureBox mainArea) : base(mainArea)
+        public ComputerPlatform(PictureBox mainArea, Label label1) : base(mainArea, label1)
         {
             Type = "computer";
-            SpeedY = 20;
+            SpeedY = 10;
             Body = new Rectangle(20, 50, width, height);
         }
 
@@ -136,7 +135,7 @@ namespace Ping_Pong
         public void Update(Ball ball)
         {
             int center = Body.Y + height / 2;
-            if (ball.Dx < 0 && ball.Body.X <= areaWidth * 2 / 3)
+            if (ball.SpeedX < 0 && ball.Body.X <= areaWidth * 2 / 3)
             {
                 if (Body.Bottom + 0 <= ball.Body.Bottom || Body.Top - 0 >= ball.Body.Top)
                 {
