@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Ping_Pong
 {
-    class Ball
+    public class Ball
     {
         public event Goal GoalEvent;
         public Rectangle Body;
@@ -42,7 +38,8 @@ namespace Ping_Pong
 
         public static int AbsMax(int f, int s)
         {
-            if (Math.Abs(f) >= Math.Abs(s)){
+            if (Math.Abs(f) >= Math.Abs(s))
+            {
                 return f;
             }
             else
@@ -51,6 +48,39 @@ namespace Ping_Pong
             }
         }
 
+        public void MoveCollision(Platform platform)
+        {
+            if (Body.X >= areaWidth / 2 && Body.IntersectsWith(platform.Body))
+            {
+                if (SpeedX < 0)
+                {
+                    Body.X = platform.Body.Left - Body.Width - 3;
+                    if (Math.Abs(platform.SpeedX) >= 45)
+                        SpeedX = -45;
+                    else
+                        SpeedX = -Math.Max(Math.Abs(platform.SpeedX), 45);
+                }
+                else if (SpeedX > 0)
+                {
+                    if (Body.Left <= platform.Body.Left && Body.Right >= platform.Body.Left && Body.Right <= platform.Body.Right)
+                    {
+                        Body.X = platform.Body.Left - Body.Width - 3;
+                        //SpeedX = -AbsMax(platform.SpeedX, SpeedX);
+                        if (Math.Abs(platform.SpeedX) >= 45)
+                            SpeedX = -45;
+                        else
+                            SpeedX = -Math.Max(Math.Abs(platform.SpeedX), 45);
+                        //SpeedX = 1;
+                    }
+                    else if (Body.Left <= platform.Body.Right && platform.SpeedX > 0)
+                    {
+                        Body.X = platform.Body.Right + 10;
+                        SpeedX = Math.Abs(AbsMax(platform.SpeedX, 25));
+                        //SpeedX = 1;
+                    }
+                }
+            }
+        }
 
         public void Collision(Platform[] platforms)
         {
@@ -58,32 +88,27 @@ namespace Ping_Pong
             {
                 if (Body.IntersectsWith(item.Body))
                 {
-                    if (item.Type == "player") //&& Body.Right >= item.Body.Left + 10)
+                    /*if (item.Type == "player" && Body.Right >= item.Body.Left + 10 && SpeedX < 0)
                     {
-                        /*if (Dx > 0 && Body.Right >= item.Body.Left)
-                        {
-                            Body.X = item.Body.Left - Body.Width;
-                            Dx *= -1;
-                        }
-                        else if (Dx < 0 && Body.Left <= item.Body.Right)
-                        {
-                            Body.X = item.Body.Right + 5;
-                            Dx = 1;
-                        }*/
-
-                        //if (Dx > 0)
-                        //{
-                            SpeedX = -AbsMax(item.SpeedX, SpeedX);
-                        //}
-                    }
-
+                        Body.X = item.Body.Left - Body.Width;
+                        if (SpeedX > 0)
+                            SpeedX += 25;
+                        else
+                            SpeedX -= 25;
+                        SpeedX *= -1;
+                    }*/
                     if (item.Type == "computer" && Body.Left <= item.Body.Right - 10)
                     {
+                        if (SpeedX >= 0)
+                            SpeedX += 25;
+                        else
+                            SpeedX -= 25;
                         SpeedX *= -1;
                         Body.X = item.Body.Right;
                     }
                 }
             }
+
         }
 
         public void Update(Platform[] platforms)
@@ -103,20 +128,30 @@ namespace Ping_Pong
                 GoalEvent('c');
                 Body.X = areaWidth / 2;
                 Body.Y = random.Next(0, areaHeight - Body.Height - 5);
-                SpeedX = -5;
+                SpeedX = 5;
             }
             else if (Body.Right >= areaWidth)
             {
                 GoalEvent('p');
                 Body.X = areaWidth / 2;
                 Body.Y = random.Next(0, areaHeight - Body.Height - 5);
-                SpeedX = 5;
+                SpeedX = -5;
             }
 
             Body.X += SpeedX;
             Body.Y += SpeedY;
 
+            if (Math.Abs(SpeedX) > 10)
+            {
+                if (SpeedX <= 0)
+                    SpeedX += 3;
+                else
+                    SpeedX -= 1;
+
+            }
+
             Collision(platforms);
+            MoveCollision(platforms[0]);
         }
     }
 }

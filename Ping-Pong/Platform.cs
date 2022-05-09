@@ -4,8 +4,9 @@ using System.Windows.Forms;
 
 namespace Ping_Pong
 {
-    class Platform
+    public class Platform
     {
+        public event MoveCollision CheckCollision;
         public Rectangle Body;
         protected int areaWidth;
         protected int areaHeight;
@@ -58,13 +59,14 @@ namespace Ping_Pong
         public void MouseMove(object sender, MouseEventArgs e)
         {
             Position = e.Location;
+            SpeedX = Body.Location.X - Position.X;
+            SpeedY = Body.Location.Y - Position.Y;
+            Body.Location = Position;
+            CheckCollision(this);
         }
 
         public void Update()
         {
-            SpeedX = Body.Location.X - Position.X;
-            SpeedY = Body.Location.Y - Position.Y;
-            Body.Location = Position;
             lb.Text = Convert.ToString(SpeedX) + ' ' + Convert.ToString(SpeedY);
             CheckPos();
         }
@@ -105,7 +107,7 @@ namespace Ping_Pong
         }*/
     }
 
-    class ComputerPlatform : Platform
+    public class ComputerPlatform : Platform
     {
         public ComputerPlatform(PictureBox mainArea, Label label1) : base(mainArea, label1)
         {
