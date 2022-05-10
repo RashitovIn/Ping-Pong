@@ -8,8 +8,8 @@ namespace Ping_Pong
     {
         public event Goal GoalEvent;
 
-        public Rectangle Body;
-        public Rectangle ShadowRect;
+        public Rectangle Body; // Прямоугольник для мяча
+        public Rectangle ShadowRect; // Дополнительный прямоугольник, который генерируется за основным прямоугольником. Нужен для более точной коллизии
         private int areaWidth;
         private int areaHeight;
         private Random random;
@@ -64,7 +64,7 @@ namespace Ping_Pong
                 SpeedX = Math.Abs(SpeedX);
         }
 
-        private void AngleCorrection(ComputerPlatform platform)
+        private void AngleCorrection(ComputerPlatform platform) // Изменение угла в зависимости от места попадания мяча на платформу
         {
             int newSpeedY = InitSpeed;
             Rectangle platformRect = platform.Body;
@@ -85,7 +85,7 @@ namespace Ping_Pong
             SpeedY = newSpeedY;
         }
 
-        public void PlayerCollision(PlayerPlatform platform)
+        public void PlayerCollision(PlayerPlatform platform) 
         {
             int Dx = Math.Sign(SpeedX);
             SpeedX = Math.Abs(SpeedX);

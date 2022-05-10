@@ -33,6 +33,7 @@ namespace Ping_Pong
 
         public void Update(Ball ball)
         {
+            // Алгоритм для игры в пинг-понг для компьютера
             int center = Body.Y + Body.Height / 2;
             if (ball.SpeedX < 0 && ball.Body.X <= areaWidth * 2 / 3)
             {
@@ -60,7 +61,7 @@ namespace Ping_Pong
     public class PlayerPlatform : ComputerPlatform
     {
         public event PlayerCollision CheckCollision;
-        public Rectangle ShadowRect;
+        public Rectangle ShadowRect; // Дополнительный прямоугольник, который генерируется за основным прямоугольником. Нужен для более точной коллизии
 
         private Point Position { get; set; }
         public int SpeedX { get; private protected set; }
