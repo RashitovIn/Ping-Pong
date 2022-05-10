@@ -4,42 +4,85 @@ using System.Windows.Forms;
 
 namespace Ping_Pong
 {
-    public class Platform
+    public class ComputerPlatform
     {
-        public event MoveCollision CheckCollision;
         public Rectangle Body;
-        protected int areaWidth;
-        protected int areaHeight;
-        protected int width = 20;
-        protected int height = 100;
-        Label lb;
 
-        public int Dy { get; set; }
-        public int Dx { get; set; }
-        public Point Position { get; set; }
-        public int SpeedX { get; private protected set; }
+        private protected int areaWidth;
+        private protected int areaHeight;
+
+        public int Dy { get; private protected set; }
         public int SpeedY { get; private protected set; }
         public string Type { get; private protected set; }
 
-        public Platform(PictureBox mainArea, Label label1)
+        public ComputerPlatform(int speed, int width, int height, int areaWidth, int areaHeight)
         {
-            Type = "player";
-            Dy = 0;
-            Dx = 0;
-            SpeedX = 35;
-            SpeedY = 35;
-            Body = new Rectangle(mainArea.Width - (20 + width), 50, width, height);
-            Position = new Point(mainArea.Width - (20 + width), 50);
-            areaWidth = mainArea.Width;
-            areaHeight = mainArea.Height;
-            lb = label1;
+            Type = "computer";
+            SpeedY = speed;
+            Body = new Rectangle(20, 50, width, height);
+            this.areaWidth = areaWidth;
+            this.areaHeight = areaHeight;
         }
 
         public virtual void CheckPos()
         {
             if (Body.Bottom >= areaHeight)
+                Body.Y = areaHeight - Body.Height;
+            else if (Body.Top <= 0)
+                Body.Y = 0;
+        }
+
+        public void Update(Ball ball)
+        {
+            int center = Body.Y + Body.Height / 2;
+            if (ball.SpeedX < 0 && ball.Body.X <= areaWidth * 2 / 3)
             {
-                Body.Y = areaHeight - height;
+                if (Body.Bottom + 0 <= ball.Body.Bottom || Body.Top - 0 >= ball.Body.Top)
+                {
+                    if (ball.Body.Y < center)
+                        Dy = -1;
+                    else if (ball.Body.Y > center)
+                        Dy = 1;
+                }
+            }
+            else
+            {
+                if (center + 30 < areaHeight / 2)
+                    Dy = 1;
+                else if (center - 30 > areaHeight / 2)
+                    Dy = -1;
+            }
+
+            Body.Y += Dy * SpeedY;
+            Dy = 0;
+            CheckPos();
+        }
+    }
+    public class PlayerPlatform : ComputerPlatform
+    {
+        public event PlayerCollision CheckCollision;
+        public Rectangle ShadowRect;
+
+        private Point Position { get; set; }
+        public int SpeedX { get; private protected set; }
+
+        public PlayerPlatform(int speed, int width, int height, int areaWidth, int areaHeight) : base(speed, width, height, areaWidth, areaHeight)
+        {
+            Type = "player";
+            Dy = 0;
+            SpeedX = speed;
+            SpeedY = speed;
+            Body = new Rectangle(areaWidth - (20 + width), 50, width, height);
+            ShadowRect = new Rectangle();
+            this.areaWidth = areaWidth;
+            this.areaHeight = areaHeight;
+        }
+
+        public override void CheckPos()
+        {
+            if (Body.Bottom >= areaHeight)
+            {
+                Body.Y = areaHeight - Body.Height;
             }
             else if (Body.Top <= 0)
             {
@@ -48,124 +91,44 @@ namespace Ping_Pong
 
             if (Body.Right >= areaWidth)
             {
-                Body.X = areaWidth - width;
+                Body.X = areaWidth - Body.Width;
             }
-            else if (Body.Left <= areaWidth / 2)
+            else if (Body.Left <= areaWidth / 2 + 15)
             {
-                Body.X = areaWidth / 2;
+                Body.X = areaWidth / 2 + 15;
             }
+
+            ShadowRect.Location = Body.Location;
+            //oldRect.Size = new Size(Math.Max(60, Math.Abs(oldRect.Right - Body.Left)), Body.Height);
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
         {
-            Position = e.Location;
-            SpeedX = Body.Location.X - Position.X;
-            SpeedY = Body.Location.Y - Position.Y;
-            Body.Location = Position;
-            CheckCollision(this);
+            if (e.Location.X < areaWidth && 0 < e.Location.Y && e.Location.Y < areaHeight)
+            {
+                int x = e.Location.X - Body.Width / 2;
+                int y = e.Location.Y - Body.Height / 2;
+
+                Position = new Point(x, y);
+
+                if (areaWidth / 2 + 30 < e.Location.X)
+                {
+                    ShadowRect.Size = new Size(Math.Min(60, Math.Abs(ShadowRect.Right - Body.Left)), Body.Height);
+
+                    SpeedX = Position.X - Body.Location.X;
+                    SpeedY = Position.Y - Body.Location.Y;
+
+                }
+                Body.Location = Position;
+
+                CheckCollision(this);
+            }
         }
 
         public void Update()
         {
-            lb.Text = Convert.ToString(SpeedX) + ' ' + Convert.ToString(SpeedY);
-            CheckPos();
-        }
-
-        /*public void Update(Ball ball)
-        {
-            int center = Body.Y + height / 2;
-            if (ball.Dx > 0 && ball.Body.X >= areaWidth * 2 / 3)
-            {
-                if (Body.Bottom + 0 <= ball.Body.Bottom || Body.Top - 0 >= ball.Body.Top)
-                {
-                    if (ball.Body.Y < center)
-                    {
-                        Dy = -1;
-                    }
-                    else if (ball.Body.Y > center)
-                    {
-                        Dy = 1;
-                    }
-                }
-            }
-            else
-            {
-                if (center + 30 < areaHeight / 2)
-                {
-                    Dy = 1;
-                }
-                else if (center - 30 > areaHeight / 2)
-                {
-                    Dy = -1;
-                }
-            }
-
-            Body.Y += Dy * SpeedY;
-            Dy = 0;
-
-            CheckPos();
-        }*/
-    }
-
-    public class ComputerPlatform : Platform
-    {
-        public ComputerPlatform(PictureBox mainArea, Label label1) : base(mainArea, label1)
-        {
-            Type = "computer";
-            SpeedY = 10;
-            Body = new Rectangle(20, 50, width, height);
-        }
-
-        /*public bool Predict()
-        {
-            int center = Body.Y + width / 2;
-            if 
-        }*/
-
-        public override void CheckPos()
-        {
-            if (Body.Bottom >= areaHeight)
-            {
-                Body.Y = areaHeight - height;
-            }
-            else if (Body.Top <= 0)
-            {
-                Body.Y = 0;
-            }
-        }
-
-        public void Update(Ball ball)
-        {
-            int center = Body.Y + height / 2;
-            if (ball.SpeedX < 0 && ball.Body.X <= areaWidth * 2 / 3)
-            {
-                if (Body.Bottom + 0 <= ball.Body.Bottom || Body.Top - 0 >= ball.Body.Top)
-                {
-                    if (ball.Body.Y < center)
-                    {
-                        Dy = -1;
-                    }
-                    else if (ball.Body.Y > center)
-                    {
-                        Dy = 1;
-                    }
-                }
-            }
-            else
-            {
-                if (center + 30 < areaHeight / 2)
-                {
-                    Dy = 1;
-                }
-                else if (center - 30 > areaHeight / 2)
-                {
-                    Dy = -1;
-                }
-            }
-
-            Body.Y += Dy * SpeedY;
-            Dy = 0;
-
+            //l.Text = Convert.ToString(SpeedX) + ' ' + Convert.ToString(SpeedY);
+            SpeedX += -Math.Sign(SpeedX);
             CheckPos();
         }
     }

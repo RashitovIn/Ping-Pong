@@ -6,96 +6,148 @@ using System.Windows.Forms;
 namespace Ping_Pong
 {
     public delegate void Goal(char platformType);
-    public delegate void MoveCollision(Platform platform);
+    public delegate void PlayerCollision(PlayerPlatform player);
 
     public partial class Form1 : Form
     {
         Ball ball;
-        Platform player;
         ComputerPlatform computer;
+        PlayerPlatform player;
         Graphics g;
-        Platform[] platforms = new Platform[2];
+
+        public int pGoals;
+        public int cGoals;
 
         public Form1()
         {
             InitializeComponent();
 
-            compGoals.Text = "0";
-            playerGoals.Text = "0";
+            pGoals = 0;
+            cGoals = 0;
+        }
+
+        private void GameController()
+        {
+            if (pGoals >= 5 || cGoals >= 5)
+            {
+                string text = "";
+                Color color = Color.Black;
+                int smech = 0;
+                if (pGoals >= 5)
+                {
+                    text = "Вы победили!";
+                    color = Color.Green;
+                    smech = 20;
+                }
+                else if (cGoals >= 5)
+                {
+                    text = "Вы проиграли!";
+                    //g.DrawString("Вы проиграли!", new Font("Arial", 21), Brushes.Red, new Point(mainArea.Width / 2 - 26, 5));
+                    color = Color.Red;
+                    smech = 8;
+                }
+
+                timer.Tick -= new EventHandler(Update);
+                timer.Enabled = false;
+                timer.Stop();
+                mainArea.Enabled = false;
+                mainArea.Visible = false;
+                panel1.Enabled = true;
+                panel1.Visible = true;
+                label1.Text = text;
+                label1.ForeColor = color;
+                label1.Location = new Point(mainArea.Width / 2 - label1.Width * 3 / 2 - smech, label1.Location.Y);
+            }
+        }
+
+        private void Start(int compSpeed, int playerWidth, int playerHeight, int compWidth, int comprHeight, int ballSpeed)
+        {
+            mainArea.Enabled = true;
+            mainArea.Visible = true;
+            mainArea.Dock = DockStyle.Fill;
             mainArea.Image = new Bitmap(mainArea.Width, mainArea.Height);
+            timer.Start();
             g = Graphics.FromImage(mainArea.Image);
 
-            ball = new Ball(mainArea);
+            pGoals = 0;
+            cGoals = 0;
+
+            ball = new Ball(mainArea.Width, mainArea.Height, ballSpeed);
             ball.GoalEvent += Goal;
 
-            player = new Platform(mainArea, label1);
-            player.CheckCollision += ball.MoveCollision;
+            computer = new ComputerPlatform(compSpeed, compWidth, comprHeight, mainArea.Width, mainArea.Height);
 
-            computer = new ComputerPlatform(mainArea, label1);
-            
-            KeyUp += new KeyEventHandler(PlatformControlUp);
-            KeyDown += new KeyEventHandler(PlatformControlDown);
+            player = new PlayerPlatform(15, playerWidth, playerHeight, mainArea.Width, mainArea.Height);
+            player.CheckCollision += ball.PlayerCollision;
+
             mainArea.MouseMove += new MouseEventHandler(player.MouseMove);
             timer.Tick += new EventHandler(Update);
             timer.Interval = 10;
             timer.Enabled = true;
         }
 
-        private void Update(object sender, EventArgs e)
+        private void Drawing()
         {
             g.Clear(Color.FromArgb(0, Color.White));
-            
-            player.Update();
-            computer.Update(ball);
 
-            platforms[0] = player;
-            platforms[1] = computer;
-            ball.Update(platforms);
-            label1.Text = Convert.ToString(ball.SpeedX) + ' ' + Convert.ToString(ball.SpeedY);
+            g.DrawString(Convert.ToString(cGoals) + ':' + Convert.ToString(pGoals), new Font("Arial", 21), Brushes.Black, new Point(mainArea.Width / 2 - 26, 5));
+            g.DrawLine(new Pen(Color.Black, 2), new Point(mainArea.Width / 2 - 1, 0), new Point(mainArea.Width / 2 - 1, mainArea.Height));
+            
             g.DrawImage(ball.Sprite, ball.Body);
+            //g.FillRectangle(Brushes.Red, ball.ShadowRect);
+            
+            //g.FillRectangle(Brushes.Red, ball.Body);
+            //g.FillRectangle(Brushes.Blue, player.ShadowRect);
             g.FillRectangle(Brushes.Black, player.Body);
             g.FillRectangle(Brushes.Black, computer.Body);
 
             mainArea.Refresh();
         }
 
-        private void PlatformControlUp(object sender, KeyEventArgs e)
+        private void Update(object sender, EventArgs e)
         {
-            //player.Dy = 0;
-            //player.Dx = 0;
-        }
+            player.Update();
+            computer.Update(ball);
 
-        private void PlatformControlDown(object sender, KeyEventArgs e)
-        {
-            /*switch (e.KeyCode)
-            {
-                case Keys.Up:
-                    player.Dy = -1;
-                    break;
-                case Keys.Down:
-                    player.Dy = 1;
-                    break;
-                case Keys.Left:
-                    player.Dx = -1;
-                    break;
-                case Keys.Right:
-                    player.Dx = 1;
-                    break;
-            }*/
+            ball.Update(computer.Body, player);
+
+            Drawing();
+            GameController();
         }
 
         private void Goal(char platformType)
         {
             if (platformType == 'p')
             {
-                compGoals.Text = Convert.ToString(Convert.ToInt32(compGoals.Text) + 1);
-                //System.Threading.Thread.Sleep(200);
+                cGoals++;
+                Thread.Sleep(100);
             }
             else
             {
-                playerGoals.Text = Convert.ToString(Convert.ToInt32(playerGoals.Text) + 1);
-                //System.Threading.Thread.Sleep(200);
+                pGoals++;
+                Thread.Sleep(100);
             }
+        }
+
+        private void easyBtn_Click(object sender, EventArgs e)
+        {
+            panel1.Enabled = false;
+            panel1.Visible = false;
+            Start(8, 20, 100, 20, 80, 7);
+        }
+
+        private void mediumBtn_Click(object sender, EventArgs e)
+        {
+            panel1.Enabled = false;
+            panel1.Visible = false;
+            Start(15, 20, 100, 20, 100, 10);
+        }
+
+        private void hardBtn_Click(object sender, EventArgs e)
+        {
+            panel1.Enabled = false;
+            panel1.Visible = false;
+            Start(20, 20, 100, 20, 100, 13);
         }
     }
 }
