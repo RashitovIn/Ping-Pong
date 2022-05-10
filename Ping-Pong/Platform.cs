@@ -7,7 +7,6 @@ namespace Ping_Pong
     public class ComputerPlatform
     {
         public Rectangle Body;
-
         private protected int areaWidth;
         private protected int areaHeight;
 
@@ -129,7 +128,6 @@ namespace Ping_Pong
         {
             SpeedX += -Math.Sign(SpeedX);
             CheckPos();
-            //g.DrawString(Convert.ToString(SpeedX), new Font("Roboto", 21), Brushes.White, new Point(5, 5));
         }
     }
 }

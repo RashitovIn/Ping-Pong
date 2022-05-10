@@ -40,7 +40,7 @@ namespace Ping_Pong
             Sprite.MakeTransparent(Color.FromArgb(0, 0, 0));
         }
 
-        private double GetAngle(char side)
+        private double GetAngle()
         {
             int i = random.Next(0, 2);
             if (i == 0)
@@ -51,7 +51,7 @@ namespace Ping_Pong
 
         private void StartPosition(char side)
         {
-            angle = GetAngle(side);
+            angle = GetAngle();
             Body.X = areaWidth / 2;
             Body.Y = random.Next(0, areaHeight - Body.Height - 5);
 
@@ -120,6 +120,7 @@ namespace Ping_Pong
                     }
                 }
             }
+            // Дополнительная коллизия для отлова мяча на большой скорости
             else if (Body.X >= areaWidth / 2 - 40 && Dx > 0 && !Body.IntersectsWith(platform.Body) && platform.SpeedX <= 0)
             {
                 if (ShadowRect.IntersectsWith(platform.Body) || ShadowRect.IntersectsWith(platform.ShadowRect))
@@ -130,7 +131,7 @@ namespace Ping_Pong
                     else
                         SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
                     Dx = -1;
-                    //SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle + random.Next(1) / 100)));
+                    
                     AngleCorrection(platform.Body);
                 }
             }
@@ -188,7 +189,6 @@ namespace Ping_Pong
 
             ComputerCollision(computerRect);
             PlayerCollision(player);
-
         }
     }
 }

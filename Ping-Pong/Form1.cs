@@ -42,7 +42,6 @@ namespace Ping_Pong
                 else if (cGoals >= 5)
                 {
                     text = "Вы проиграли!";
-                    //g.DrawString("Вы проиграли!", new Font("Arial", 21), Brushes.Red, new Point(mainArea.Width / 2 - 26, 5));
                     color = Color.Red;
                     smech = 8;
                 }
@@ -135,7 +134,7 @@ namespace Ping_Pong
         {
             panel1.Enabled = false;
             panel1.Visible = false;
-            Start(8, 20, 100, 20, 80, 7);
+            Start(8, 20, 100, 20, 70, 7);
         }
 
         private void mediumBtn_Click(object sender, EventArgs e)
