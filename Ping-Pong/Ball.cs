@@ -71,11 +71,11 @@ namespace Ping_Pong
 
             if (Body.Bottom >= platformRect.Top - 15 && Body.Bottom < platformRect.Top + platformRect.Height / 3 - 5)
             {
-                newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
+                newSpeedY = -Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180))) * -Math.Sign(SpeedY);
             }
             else if (Body.Top <= platformRect.Bottom + 15 && platformRect.Top > platformRect.Top + platformRect.Height * 2 / 3 + 5)
             {
-                newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
+                newSpeedY = -Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180))) * -Math.Sign(SpeedY);
             }
             else if (Body.Top >= platformRect.Top + platformRect.Height / 3 - 10 && Body.Bottom <= platformRect.Top + platformRect.Height * 2 / 3 + 10)
             {

@@ -134,7 +134,7 @@ namespace Ping_Pong
         {
             panel1.Enabled = false;
             panel1.Visible = false;
-            Start(8, 20, 100, 20, 70, 7);
+            Start(7, 20, 100, 20, 70, 7);
         }
 
         private void mediumBtn_Click(object sender, EventArgs e)
