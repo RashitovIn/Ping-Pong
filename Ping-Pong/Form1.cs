@@ -89,17 +89,18 @@ namespace Ping_Pong
         private void Drawing()
         {
             g.Clear(Color.FromArgb(0, Color.White));
+            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 244, 67, 54)), new Rectangle(0, 0, mainArea.Width / 2, mainArea.Height));
+            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 63, 81, 181)), new Rectangle(mainArea.Width / 2, 0, mainArea.Width / 2, mainArea.Height));
 
-            g.DrawString(Convert.ToString(cGoals) + ':' + Convert.ToString(pGoals), new Font("Arial", 21), Brushes.Black, new Point(mainArea.Width / 2 - 26, 5));
-            g.DrawLine(new Pen(Color.Black, 2), new Point(mainArea.Width / 2 - 1, 0), new Point(mainArea.Width / 2 - 1, mainArea.Height));
+            g.DrawString(Convert.ToString(cGoals) + ' ' + Convert.ToString(pGoals), new Font("Roboto", 21), Brushes.White, new Point(mainArea.Width / 2 - 26, 5));
+            g.DrawLine(new Pen(Color.White, 2), new Point(mainArea.Width / 2 - 1, 0), new Point(mainArea.Width / 2 - 1, mainArea.Height));
             
             g.DrawImage(ball.Sprite, ball.Body);
             //g.FillRectangle(Brushes.Red, ball.ShadowRect);
             
-            //g.FillRectangle(Brushes.Red, ball.Body);
             //g.FillRectangle(Brushes.Blue, player.ShadowRect);
-            g.FillRectangle(Brushes.Black, player.Body);
-            g.FillRectangle(Brushes.Black, computer.Body);
+            g.FillRectangle(Brushes.White, player.Body);
+            g.FillRectangle(Brushes.White, computer.Body);
 
             mainArea.Refresh();
         }
@@ -108,7 +109,7 @@ namespace Ping_Pong
         {
             player.Update();
             computer.Update(ball);
-
+            
             ball.Update(computer.Body, player);
 
             Drawing();

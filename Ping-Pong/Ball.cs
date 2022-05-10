@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Ping_Pong
 {
@@ -38,7 +37,7 @@ namespace Ping_Pong
             var appDir = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory())));
             var fullPath = Path.Combine(appDir, @"src");
             Sprite = new Bitmap(Image.FromFile(Path.Combine(fullPath, "shar.bmp")));
-            Sprite.MakeTransparent(Color.FromArgb(255, 255, 255));
+            Sprite.MakeTransparent(Color.FromArgb(0, 0, 0));
         }
 
         private double GetAngle()
@@ -60,52 +59,53 @@ namespace Ping_Pong
             SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle)));
         }
 
+        private void AngleCorrection(Rectangle platformRect)
+        {
+            int newSpeedY = InitSpeed;
+
+            if (Body.Bottom >= platformRect.Top - 15 && Body.Bottom < platformRect.Top + platformRect.Height / 3 - 10)
+            {
+                newSpeedY = Convert.ToInt32(InitSpeed * -Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
+            }
+            else if (Body.Top <= platformRect.Bottom + 15 && platformRect.Top > platformRect.Top + platformRect.Height * 2 / 3 + 10)
+            {
+                newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
+            }
+            else if (Body.Top >= platformRect.Top + platformRect.Height / 3 - 10 && Body.Bottom <= platformRect.Top + platformRect.Height * 2 / 3 + 10)
+            {
+                newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(5, 10) * Math.PI / 180)));
+                //MessageBox.Show(Convert.ToString(SpeedY));
+            }
+
+            SpeedY = newSpeedY;
+            //MessageBox.Show(Convert.ToString(SpeedY));
+        }
+
         public void PlayerCollision(PlayerPlatform platform)
         {
             int Dx = Math.Sign(SpeedX);
-            int Dy = Math.Sign(SpeedY);
             SpeedX = Math.Abs(SpeedX);
-            SpeedY = Math.Abs(SpeedY);
 
-            /*if (Dx > 0 && platform.SpeedX > 0 && (Body.IntersectsWith(platform.Body) || ShadowRect.IntersectsWith(platform.ShadowRect)))
+            /*if (Dx > 0 && platform.SpeedX > 0 && Body.Right > platform.Body.Left && (ShadowRect.IntersectsWith(platform.ShadowRect) || Body.IntersectsWith(platform.Body)))
             {
-                Body.X = platform.Body.Right + 20;
-                SpeedX = Math.Max(Math.Abs(platform.SpeedX), 25);
+                Body.X = platform.Body.Right + 50;
+                SpeedX = 55;
 
             }*/
-           
-                if (Body.X >= areaWidth / 2 - 40 && Body.IntersectsWith(platform.Body))
+
+            if (Body.X >= areaWidth / 2 - 40 && Body.IntersectsWith(platform.Body))
+            {
+                if (Dx < 0)
                 {
-                    if (Dx < 0)
-                    {
-                        Body.X = platform.Body.Left - Body.Width - 3;
-                        if (Math.Abs(platform.SpeedX) >= 35)
-                            SpeedX = 35;
-                        else
-                            SpeedX = Math.Max(Math.Abs(platform.SpeedX), 15);
-                    }
-                    else if (Dx > 0)
-                    {
-                        if (Body.Left <= platform.Body.Left && Body.Right >= platform.Body.Left && Body.Right <= platform.Body.Right)
-                        {
-                            Body.X = platform.Body.Left - Body.Width - 3;
-                            if (Math.Abs(platform.SpeedX) >= 45)
-                                SpeedX = 45;
-                            else
-                                SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
-                            Dx = -1;
-                            SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle + random.Next(1) / 100)));
-                        }
-                        /*else if (Body.Left <= platform.Body.Right && platform.SpeedX > 0 && Body.Left >= platform.Body.Left)
-                        {
-                            Body.X = platform.Body.Right + 10;
-                            SpeedX = Math.Max(platform.SpeedX, 25);
-                        }*/
-                    }
+                    Body.X = platform.Body.Left - Body.Width - 3;
+                    if (Math.Abs(platform.SpeedX) >= 35)
+                        SpeedX = 35;
+                    else
+                        SpeedX = Math.Max(Math.Abs(platform.SpeedX), 15);
                 }
-                else if (Body.X >= areaWidth / 2 - 40 && Dx > 0 && !Body.IntersectsWith(platform.Body))
+                else if (Dx > 0)
                 {
-                    if (ShadowRect.IntersectsWith(platform.Body) || ShadowRect.IntersectsWith(platform.ShadowRect))
+                    if (Body.Left <= platform.Body.Left && Body.Right >= platform.Body.Left && Body.Right <= platform.Body.Right)
                     {
                         Body.X = platform.Body.Left - Body.Width - 3;
                         if (Math.Abs(platform.SpeedX) >= 45)
@@ -113,22 +113,43 @@ namespace Ping_Pong
                         else
                             SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
                         Dx = -1;
-                        SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle + random.Next(1) / 100)));
+                        //SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle + random.NextDouble() / 10)));
+                        AngleCorrection(platform.Body);
+
                     }
+                    /*else if (Body.Left <= platform.Body.Right && platform.SpeedX > 0 && Body.Left >= platform.Body.Left)
+                    {
+                        Body.X = platform.Body.Right + 10;
+                        SpeedX = Math.Max(platform.SpeedX, 25);
+                    }*/
                 }
-            
+            }
+            else if (Body.X >= areaWidth / 2 - 40 && Dx > 0 && !Body.IntersectsWith(platform.Body))
+            {
+                if (ShadowRect.IntersectsWith(platform.Body) || ShadowRect.IntersectsWith(platform.ShadowRect))
+                {
+                    Body.X = platform.Body.Left - Body.Width - 3;
+                    if (Math.Abs(platform.SpeedX) >= 45)
+                        SpeedX = 45;
+                    else
+                        SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
+                    Dx = -1;
+                    //SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle + random.Next(1) / 100)));
+                    AngleCorrection(platform.Body);
+                }
+            }
 
             SpeedX *= Dx;
-            SpeedY *= Dy;
         }
 
         private void ComputerCollision(Rectangle computerRect)
         {
             if (Body.IntersectsWith(computerRect) && Body.Left <= computerRect.Right - 10)
             {
-                SpeedX += Math.Sign(SpeedX) * 15;
+                SpeedX += Math.Sign(SpeedX) * 13;
                 SpeedX *= -1;
                 Body.X = computerRect.Right;
+                AngleCorrection(computerRect);
             }
         }
 
@@ -168,9 +189,6 @@ namespace Ping_Pong
             {
                 SpeedX += Math.Sign(SpeedX) * InitSpeed;
             }
-
-            //lb.Text = Convert.ToString(Math.Acos(SpeedY / Math.Sqrt(Math.Pow(SpeedX, 2) + Math.Pow(SpeedY, 2))) / Math.PI * 180);
-            //lb.Text = Convert.ToString(SpeedX);
 
             ComputerCollision(computerRect);
             PlayerCollision(player);

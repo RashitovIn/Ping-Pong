@@ -99,7 +99,6 @@ namespace Ping_Pong
             }
 
             ShadowRect.Location = Body.Location;
-            //oldRect.Size = new Size(Math.Max(60, Math.Abs(oldRect.Right - Body.Left)), Body.Height);
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
@@ -120,16 +119,16 @@ namespace Ping_Pong
 
                 }
                 Body.Location = Position;
-
+                
                 CheckCollision(this);
             }
         }
 
         public void Update()
         {
-            //l.Text = Convert.ToString(SpeedX) + ' ' + Convert.ToString(SpeedY);
             SpeedX += -Math.Sign(SpeedX);
             CheckPos();
+            //g.DrawString(Convert.ToString(SpeedX), new Font("Roboto", 21), Brushes.White, new Point(5, 5));
         }
     }
 }

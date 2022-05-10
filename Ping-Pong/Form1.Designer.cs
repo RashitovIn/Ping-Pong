@@ -43,9 +43,10 @@ namespace Ping_Pong
             // 
             // mainArea
             // 
+            this.mainArea.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.mainArea.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mainArea.Enabled = false;
-            this.mainArea.Location = new System.Drawing.Point(206, 271);
+            this.mainArea.Location = new System.Drawing.Point(206, 409);
             this.mainArea.Name = "mainArea";
             this.mainArea.Size = new System.Drawing.Size(507, 299);
             this.mainArea.TabIndex = 1;
@@ -108,7 +109,7 @@ namespace Ping_Pong
             this.panel1.Controls.Add(this.hardBtn);
             this.panel1.Controls.Add(this.easyBtn);
             this.panel1.Controls.Add(this.mediumBtn);
-            this.panel1.Location = new System.Drawing.Point(206, 12);
+            this.panel1.Location = new System.Drawing.Point(206, 150);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(507, 253);
             this.panel1.TabIndex = 6;
@@ -124,7 +125,6 @@ namespace Ping_Pong
             this.Name = "Form1";
             this.Text = "Ping-Pong";
             this.TopMost = true;
-            this.TransparencyKey = System.Drawing.Color.Transparent;
             ((System.ComponentModel.ISupportInitialize)(this.mainArea)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
