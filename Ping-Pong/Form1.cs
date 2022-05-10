@@ -110,7 +110,7 @@ namespace Ping_Pong
             player.Update();
             computer.Update(ball);
             
-            ball.Update(computer.Body, player);
+            ball.Update(computer, player);
 
             Drawing();
             GameController();

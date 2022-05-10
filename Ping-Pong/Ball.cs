@@ -64,15 +64,16 @@ namespace Ping_Pong
                 SpeedX = Math.Abs(SpeedX);
         }
 
-        private void AngleCorrection(Rectangle platformRect)
+        private void AngleCorrection(ComputerPlatform platform)
         {
             int newSpeedY = InitSpeed;
+            Rectangle platformRect = platform.Body;
 
-            if (Body.Bottom >= platformRect.Top - 15 && Body.Bottom < platformRect.Top + platformRect.Height / 3 - 10)
+            if (Body.Bottom >= platformRect.Top - 15 && Body.Bottom < platformRect.Top + platformRect.Height / 3 - 5)
             {
-                newSpeedY = Convert.ToInt32(InitSpeed * -Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
+                newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
             }
-            else if (Body.Top <= platformRect.Bottom + 15 && platformRect.Top > platformRect.Top + platformRect.Height * 2 / 3 + 10)
+            else if (Body.Top <= platformRect.Bottom + 15 && platformRect.Top > platformRect.Top + platformRect.Height * 2 / 3 + 5)
             {
                 newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(60, 130) * Math.PI / 180)));
             }
@@ -92,7 +93,7 @@ namespace Ping_Pong
             // Основная коллизия мяча и каретки игрока
             if (Body.X >= areaWidth / 2 - 40 && Body.IntersectsWith(platform.Body))
             {
-                if (Dx < 0)
+                if (Dx < 0) //Мяч уже отбит, второе столкновение просто увеличит скорость полета мяча
                 {
                     Body.X = platform.Body.Left - Body.Width - 3;
                     if (Math.Abs(platform.SpeedX) >= 35)
@@ -116,7 +117,7 @@ namespace Ping_Pong
                             SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
                         Dx = -1;
 
-                        AngleCorrection(platform.Body);
+                        AngleCorrection(platform);
                     }
                 }
             }
@@ -132,25 +133,26 @@ namespace Ping_Pong
                         SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
                     Dx = -1;
                     
-                    AngleCorrection(platform.Body);
+                    AngleCorrection(platform);
                 }
             }
 
             SpeedX *= Dx;
         }
 
-        private void ComputerCollision(Rectangle computerRect)
+        private void ComputerCollision(ComputerPlatform computer)
         {
+            Rectangle computerRect = computer.Body;
             if (Body.IntersectsWith(computerRect) && Body.Left <= computerRect.Right - 10)
             {
                 SpeedX += Math.Sign(SpeedX) * 13;
                 SpeedX *= -1;
                 Body.X = computerRect.Right;
-                AngleCorrection(computerRect);
+                AngleCorrection(computer);
             }
         }
 
-        public void Update(Rectangle computerRect, PlayerPlatform player)
+        public void Update(ComputerPlatform computer, PlayerPlatform player)
         {
             if (Body.Bottom >= areaHeight)
                 SpeedY *= -1;
@@ -187,7 +189,7 @@ namespace Ping_Pong
                 SpeedX += Math.Sign(SpeedX) * InitSpeed;
             }
 
-            ComputerCollision(computerRect);
+            ComputerCollision(computer);
             PlayerCollision(player);
         }
     }

@@ -112,7 +112,7 @@ namespace Ping_Pong
 
                 if (areaWidth / 2 + 30 < e.Location.X)
                 {
-                    ShadowRect.Size = new Size(Math.Min(30, Math.Abs(Body.X - Position.X)), Body.Height);
+                    ShadowRect.Size = new Size(Math.Min(40, Math.Abs(Body.X - Position.X)), Body.Height);
 
                     SpeedX = Position.X - Body.Location.X;
                     SpeedY = Position.Y - Body.Location.Y;
@@ -127,6 +127,7 @@ namespace Ping_Pong
         public void Update()
         {
             SpeedX += -Math.Sign(SpeedX);
+            Dy = Math.Sign(SpeedY);
             CheckPos();
         }
     }
