@@ -28,7 +28,7 @@ namespace Ping_Pong
             this.areaHeight = areaHeight;
             Body = new Rectangle(areaWidth / 2 - 13, random.Next(areaHeight - 29), 25, 25);
 
-            StartPosition();
+            StartPosition('c');
             LoadBitmap();
         }
 
@@ -40,7 +40,7 @@ namespace Ping_Pong
             Sprite.MakeTransparent(Color.FromArgb(0, 0, 0));
         }
 
-        private double GetAngle()
+        private double GetAngle(char side)
         {
             int i = random.Next(0, 2);
             if (i == 0)
@@ -49,14 +49,19 @@ namespace Ping_Pong
                 return random.Next(130, 160) * Math.PI / 180;
         }
 
-        private void StartPosition()
+        private void StartPosition(char side)
         {
-            angle = GetAngle();
+            angle = GetAngle(side);
             Body.X = areaWidth / 2;
             Body.Y = random.Next(0, areaHeight - Body.Height - 5);
 
             SpeedX = Convert.ToInt32(Math.Round(InitSpeed * Math.Cos(angle)));
             SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle)));
+
+            if (side == 'c')
+                SpeedX = -Math.Abs(SpeedX);
+            else
+                SpeedX = Math.Abs(SpeedX);
         }
 
         private void AngleCorrection(Rectangle platformRect)
@@ -74,11 +79,9 @@ namespace Ping_Pong
             else if (Body.Top >= platformRect.Top + platformRect.Height / 3 - 10 && Body.Bottom <= platformRect.Top + platformRect.Height * 2 / 3 + 10)
             {
                 newSpeedY = Convert.ToInt32(InitSpeed * Math.Round(Math.Sin(random.Next(5, 10) * Math.PI / 180)));
-                //MessageBox.Show(Convert.ToString(SpeedY));
             }
 
             SpeedY = newSpeedY;
-            //MessageBox.Show(Convert.ToString(SpeedY));
         }
 
         public void PlayerCollision(PlayerPlatform platform)
@@ -86,13 +89,7 @@ namespace Ping_Pong
             int Dx = Math.Sign(SpeedX);
             SpeedX = Math.Abs(SpeedX);
 
-            /*if (Dx > 0 && platform.SpeedX > 0 && Body.Right > platform.Body.Left && (ShadowRect.IntersectsWith(platform.ShadowRect) || Body.IntersectsWith(platform.Body)))
-            {
-                Body.X = platform.Body.Right + 50;
-                SpeedX = 55;
-
-            }*/
-
+            // Основная коллизия мяча и каретки игрока
             if (Body.X >= areaWidth / 2 - 40 && Body.IntersectsWith(platform.Body))
             {
                 if (Dx < 0)
@@ -105,7 +102,12 @@ namespace Ping_Pong
                 }
                 else if (Dx > 0)
                 {
-                    if (Body.Left <= platform.Body.Left && Body.Right >= platform.Body.Left && Body.Right <= platform.Body.Right)
+                    if (platform.SpeedX > 0)
+                    {
+                        Body.X = platform.Body.Right + 10;
+                        SpeedX += Math.Abs(platform.SpeedX);
+                    }
+                    else if (Body.Left <= platform.Body.Left && Body.Right >= platform.Body.Left && Body.Right <= platform.Body.Right)
                     {
                         Body.X = platform.Body.Left - Body.Width - 3;
                         if (Math.Abs(platform.SpeedX) >= 45)
@@ -113,18 +115,12 @@ namespace Ping_Pong
                         else
                             SpeedX = Math.Max(Math.Abs(platform.SpeedX), 12);
                         Dx = -1;
-                        //SpeedY = Convert.ToInt32(Math.Round(InitSpeed * Math.Sin(angle + random.NextDouble() / 10)));
-                        AngleCorrection(platform.Body);
 
+                        AngleCorrection(platform.Body);
                     }
-                    /*else if (Body.Left <= platform.Body.Right && platform.SpeedX > 0 && Body.Left >= platform.Body.Left)
-                    {
-                        Body.X = platform.Body.Right + 10;
-                        SpeedX = Math.Max(platform.SpeedX, 25);
-                    }*/
                 }
             }
-            else if (Body.X >= areaWidth / 2 - 40 && Dx > 0 && !Body.IntersectsWith(platform.Body))
+            else if (Body.X >= areaWidth / 2 - 40 && Dx > 0 && !Body.IntersectsWith(platform.Body) && platform.SpeedX <= 0)
             {
                 if (ShadowRect.IntersectsWith(platform.Body) || ShadowRect.IntersectsWith(platform.ShadowRect))
                 {
@@ -163,12 +159,12 @@ namespace Ping_Pong
             if (Body.Left <= 0)
             {
                 GoalEvent('c');
-                StartPosition();
+                StartPosition('c');
             }
             else if (Body.Right >= areaWidth)
             {
                 GoalEvent('p');
-                StartPosition();
+                StartPosition('p');
             }
 
             ShadowRect = Body;
@@ -192,6 +188,7 @@ namespace Ping_Pong
 
             ComputerCollision(computerRect);
             PlayerCollision(player);
+
         }
     }
 }

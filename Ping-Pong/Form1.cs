@@ -84,6 +84,7 @@ namespace Ping_Pong
             timer.Tick += new EventHandler(Update);
             timer.Interval = 10;
             timer.Enabled = true;
+            Thread.Sleep(300);
         }
 
         private void Drawing()
@@ -98,7 +99,7 @@ namespace Ping_Pong
             g.DrawImage(ball.Sprite, ball.Body);
             //g.FillRectangle(Brushes.Red, ball.ShadowRect);
             
-            //g.FillRectangle(Brushes.Blue, player.ShadowRect);
+            //g.FillRectangle(Brushes.Red, player.ShadowRect);
             g.FillRectangle(Brushes.White, player.Body);
             g.FillRectangle(Brushes.White, computer.Body);
 

@@ -98,7 +98,8 @@ namespace Ping_Pong
                 Body.X = areaWidth / 2 + 15;
             }
 
-            ShadowRect.Location = Body.Location;
+            ShadowRect.X = Body.Width + Body.X;
+            ShadowRect.Y = Body.Y;
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
@@ -112,14 +113,14 @@ namespace Ping_Pong
 
                 if (areaWidth / 2 + 30 < e.Location.X)
                 {
-                    ShadowRect.Size = new Size(Math.Min(60, Math.Abs(ShadowRect.Right - Body.Left)), Body.Height);
+                    ShadowRect.Size = new Size(Math.Min(30, Math.Abs(Body.X - Position.X)), Body.Height);
 
                     SpeedX = Position.X - Body.Location.X;
                     SpeedY = Position.Y - Body.Location.Y;
 
                 }
                 Body.Location = Position;
-                
+
                 CheckCollision(this);
             }
         }
